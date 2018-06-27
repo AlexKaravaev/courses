@@ -1,0 +1,77 @@
+#define GYRO_PORT    IN_1
+#define LEFT_MOTOR   OUT_A
+#define RIGHT_MOTOR  OUT_B
+#define BOTH_MOTORS  OUT_AB
+#define WAIT_TIME    5.0
+#define KGYROANGLE   1.043
+#define KSPEED       0.009
+#define KGYROSPEED   0.145
+#define KPOS         0.0
+#define KWANTED      0.0
+#define WANTEDSPEED  0.0
+
+
+task main(){
+
+    byte handle;
+    string s;
+    int str_size;    
+
+    int u;
+    float u_fl;
+    float max_voltage;
+    float gyro_offset = 0.0;
+    float d_time, last_time;
+    float segway_speed, segway_angle = 0.0;
+    float wheel_angle = 0.0, wanted_wheel_angle = 0.0;
+    float last_wheel_angle, wheel_speed;
+
+    DeleteFile("seg_data.txt");
+    CreateFile("seg_data.txt", 40000, handle);
+    SetSensorHTGyro(GYRO_PORT);
+    Wait(2000);
+
+    int i;
+    float offset = 0.0;   
+    for(i=0; i<200; i++){
+        offset += SensorHTGyro(GYRO_PORT);
+    }
+    gyro_offset = offset / 200.;
+    NumOut(0,0,gyro_offset);
+
+    Wait(3000);
+    ClearScreen();
+
+    max_voltage = BatteryLevel() / 1000;
+    last_time = CurrentTick();
+    wheel_angle = (MotorRotationCount(LEFT_MOTOR) + MotorRotationCount(RIGHT_MOTOR)) / 2;  
+    Wait(WAIT_TIME);    
+    while(true){
+        d_time = (CurrentTick() - last_time) / 1000;
+        last_time = CurrentTick();
+
+        segway_speed = -(SensorHTGyro(GYRO_PORT) - gyro_offset);
+        segway_angle += segway_speed * d_time;
+
+        last_wheel_angle = wheel_angle;
+        wheel_angle = (MotorRotationCount(LEFT_MOTOR) + MotorRotationCount(RIGHT_MOTOR)) / 2;
+        wheel_speed = (wheel_angle - last_wheel_angle) / d_time;
+//       wanted_wheel_angle = wanted_wheel_angle + WANTEDSPEED * d_time;
+        
+        u_fl = KGYROANGLE * segway_angle +
+            KSPEED * (wheel_speed - WANTEDSPEED) +
+            KGYROSPEED * segway_speed +
+            KPOS * (wheel_angle - wanted_wheel_angle) + 
+            KWANTED * WANTEDSPEED;
+        
+        u = u_fl * 100 / max_voltage;
+        if (abs(u) > 100) u = sign(u) * 100;
+        OnFwd(BOTH_MOTORS, u);
+        //ClearScreen();
+        //NumOut(0,0,segway_angle);
+        //NumOut(0,48,MotorRotationCount(RIGHT_MOTOR));
+        s = NumToStr(CurrentTick() - FirstTick()) + " " + NumToStr(segway_speed) + " " + NumToStr(segway_angle) + " " + NumToStr(wheel_speed) + " " + NumToStr(wheel_angle) + " " + NumToStr(u);
+        WriteLnString(handle, s, str_size);
+        Wait(WAIT_TIME);
+    }
+}

@@ -1,0 +1,18 @@
+data = read("/home/evgeniy/Рабочий стол/СКБ/Введение в специальность/Новое/Segway/seg_data.txt", -1, 6);
+time = data(:,1) / 1000;
+time = time - time(1);
+subplot(2,3,1)
+xtitle("Угол робота")
+plot2d(time, data(:,3));
+subplot(2,3,2)
+xtitle("Скорость робота")
+plot2d(time, data(:,2));
+subplot(2,3,3)
+xtitle("Скорость колес")
+plot2d(time, data(:,4));
+subplot(2,3,4)
+xtitle("Угол колес")
+plot2d(time, data(:,5));
+subplot(2,3,5)
+xtitle("Напряжение")
+plot2d(time, data(:,6));

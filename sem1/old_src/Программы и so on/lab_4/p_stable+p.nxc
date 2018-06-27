@@ -1,0 +1,48 @@
+#define MOTOR_PORT  OUT_BC
+#define RIGHT_MOTOR OUT_C
+#define LEFT_MOTOR  OUT_B
+#define FWD_VOLTAGE -70
+#define NEED_DIST   40.0
+#define H   19.0
+#define KP  8.0  
+
+task main(){
+
+    int i, u_rot_left, u_rot_right, u_rot, str_size;
+    float d1 = 0, d2 = 0, d1_last, d2_last;
+    float distance;
+    byte handle;
+    string s;
+    long int time;
+    float e;
+//    int last_time;
+
+    SetSensorLowspeed(S1);
+    SetSensorLowspeed(S2);
+    DeleteFile("data.txt");
+    CreateFile("data.txt", 10000, handle);
+    Wait(2000);
+    
+    while(true){
+        
+        d1 = SensorUS(S1);
+        d2 = SensorUS(S2);
+        if(d1 == 255) d1 = d1_last; 
+        if(d2 == 255) d2 = d2_last;
+        d1_last = d1; 
+        d2_last = d2;
+
+        distance = (d1 + d2) * H * sqrt(1.0 / (H*H + (d2 - d1) * (d2 - d1))) / 2.0;
+
+        u_rot = KP * (NEED_DIST - distance); 
+        if(abs(u_rot) > (100 - abs(FWD_VOLTAGE)))
+            u_rot = sign(u_rot) * (100 - abs(FWD_VOLTAGE)); 
+        u_rot_left = FWD_VOLTAGE + u_rot;
+        u_rot_right = FWD_VOLTAGE - u_rot;
+        OnFwd(RIGHT_MOTOR, u_rot_right);
+        OnFwd(LEFT_MOTOR, u_rot_left);
+        s = NumToStr(distance) +" " +NumToStr(CurrentTick() - FirstTick());
+        WriteLnString(handle, s, str_size);
+   }
+
+}

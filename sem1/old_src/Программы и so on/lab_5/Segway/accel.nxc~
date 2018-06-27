@@ -1,0 +1,27 @@
+float atan(float tan){
+    float ans;
+    ans = tan - tan*tan*tan/3 + tan*tan*tan*tan*tan/5 - tan*tan*tan*tan*tan*tan*tan/7;
+    return ans;
+}
+
+task main(){
+    float x,y,z;
+    float angle, tan;
+
+    SetSensorLowspeed(S1);
+    Wait(50);
+
+    while(true) {
+        ReadSensorHTAccel(S1, x, y, z);
+        ClearScreen();
+        NumOut(0, LCD_LINE1, x);
+        NumOut(0, LCD_LINE2, y);
+        NumOut(0, LCD_LINE3, z);
+
+        tan = y/x;
+        angle = atan(tan)*180/PI;
+        NumOut(0, LCD_LINE5, angle);
+
+        Wait(100);
+    }
+}

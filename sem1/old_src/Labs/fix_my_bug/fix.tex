@@ -1,0 +1,90 @@
+% указываем класс документа
+\documentclass[12pt,a4paper,openany]{extarticle}
+
+% подключаем собственный стилевой файл 
+\usepackage{mystyle}
+
+% указываем язык (для автоматической вставки слов, типа "Глава", "Содержание", "Литература", "рис." и пр.
+\selectlanguage{russian}
+
+
+\begin{document}
+
+\newcounter{myappcounter}
+\renewcommand{\themyappcounter}{\Alph{myappcounter}}
+\newcommand{\myappnum}{\refstepcounter{myappcounter}\themyappcounter}
+
+\part*{Заметка к видео с частью лекции}
+
+\section{Доказательство того, что на поведение ДПТ при повороте его ротора П-регулятором состояния на желаемый угол $\theta_w$ оказывает влияние только вид матрицы $F$ (в частности ее характеристический полином)}
+\hspace*{\parindent}Описывать состояние двигателя постоянного тока в указанной в заголовке ситуации можно как с помощью его вектора состояния $x = [\theta\;\omega\; I]^T$, так и с помощью ошибки $e$, определяемой из выражения:
+\begin{equation}\label{eq:e_xw_x}
+e = x_w - x = 
+\begin{bmatrix}
+\theta_w \\ 0 \\0
+\end{bmatrix}
+-
+\begin{bmatrix}
+\theta \\ \omega \\ I
+\end{bmatrix}\!\!\ldotp
+\end{equation}
+Это обусловлено тем, что, например, если значение вектора $e$ будет известно в момент времени~$t_1$, то найти значение вектора $x$ в этот же момент времени можно обычной разностью:
+\begin{equation}\label{eq:x_xw_e}
+x = x_w-e\ldotp
+\end{equation}
+
+Подставим в модель вход-состояние-выход ДПТ:
+\begin{equation}
+\dot{x} = Ax+Bu,
+\end{equation}
+уравнение, описывающее работу П-регулятора состояния:
+\begin{equation}
+u = Ke\ldotp
+\end{equation}
+В итоге получим:
+\begin{equation}\label{eq:dx_Ax_BKe}
+\dot{x} = Ax+BKe\ldotp
+\end{equation}
+
+Продифференцируем выражение~\eqref{eq:e_xw_x} по времени, и с учетом того, что $x_w=const$, получим:
+\begin{equation}
+\dot{e} = \dot{x}_w - \dot{x} = -\dot{x}\ldotp
+\end{equation}
+Подставим в результат уравнение~\eqref{eq:dx_Ax_BKe}:
+\begin{equation}
+\dot{e} = -Ax-BKe\ldotp
+\end{equation}
+Добавим и вычтем к/из правой части последнего выражение $Ax_w$~--- в результате получим:
+\begin{multline}\label{eq:de_Fe_Axw}
+\dot{e} = Ax_w-Ax-BKe -Ax_w = A(x_w-x)-BKe-Ax_w =  Ae-BKe - Ax_w =\\= (A-BK)e - Ax_w = Fe - Ax_w\ldotp
+\end{multline}
+
+С~учетом того, что 
+\begin{equation}
+A=
+\begin{bmatrix}
+0 & 1 & 0\\
+0 & 0 & \dfrac{k_m}{J}\\
+0 & -\dfrac{ke}{L} & -\dfrac{R}{L}
+\end{bmatrix}\!\!,
+\end{equation} 
+и содержания вектора $x_w$ выражение~\eqref{eq:de_Fe_Axw} может быть преобразовано к виду:
+\begin{equation}
+\dot{e} = Fe-
+\begin{bmatrix}
+0 & 1 & 0\\
+0 & 0 & \dfrac{k_m}{J}\\
+0 & -\dfrac{ke}{L} & -\dfrac{R}{L}
+\end{bmatrix}
+\begin{bmatrix}
+\theta_w \\ 0 \\0
+\end{bmatrix}
+=Fe-
+\begin{bmatrix}
+0 \\ 0 \\ 0
+\end{bmatrix}
+=Fe,
+\end{equation}
+который наглядно позволяет увидеть тот факт, что поведение вектора $e$, а значит и $x$ (см.~\eqref{eq:x_xw_e}), определяется исключительно матрицей $F$.
+\end{document}
+

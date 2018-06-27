@@ -1,0 +1,71 @@
+#define GYRO_PORT    IN_1
+#define LEFT_MOTOR   OUT_C
+#define RIGHT_MOTOR  OUT_B
+#define BOTH_MOTORS  OUT_BC
+#define WAIT_TIME    5.0
+#define KP           -2.1270
+#define KI           -12.734
+#define KD           -0.0808
+
+
+int getGyroOffset(){    
+
+    int i;
+    float offset = 0;    
+
+    for(i=0; i<100; i++)
+             offset = offset + SensorHTGyro(GYRO_PORT);
+    return (offset/100.0);
+}
+
+
+task main(){
+
+    int u;
+    byte handle;
+    string s;
+    int str_size;
+    float voltage;
+    float max_voltage;
+    float gyro_offset;
+    float d_time, last_time;
+    float segway_speed = 0.0, segway_angle = 0.0, segway_i_angle = 0.0;
+    float last_angle, last_speed;
+
+    DeleteFile("data.txt");
+    CreateFile("data.txt", 10000, handle);
+    SetSensorHTGyro(GYRO_PORT);
+    Wait(2000);
+    gyro_offset = getGyroOffset();
+    PlayTone(400, 500);
+    Wait(3000);
+
+    max_voltage = BatteryLevel() / 1000;
+    last_time = CurrentTick();
+    Wait(WAIT_TIME);    
+    while(true){
+
+        d_time = (CurrentTick() - last_time) / 1000;
+        last_time = CurrentTick();
+
+        last_speed = segway_speed;
+        segway_speed = (SensorHTGyro(GYRO_PORT) - gyro_offset);
+        last_angle = segway_angle;
+        segway_angle += (segway_speed + last_speed) * d_time / 2;
+        segway_i_angle += (segway_angle + last_angle) * d_time / 2;
+
+        voltage = KP * segway_angle + KI * segway_i_angle + KD * segway_speed;
+        u = -(voltage * 100) / max_voltage;
+        if (abs(u) > 100) u = sign(u) * 100;
+        OnFwd(BOTH_MOTORS, u);
+
+        /*ClearScreen();
+        NumOut(0,0,segway_i_angle);*/
+        
+        /*s = NumToStr(CurrentTick()) + " " + NumToStr(segway_speed) + " " + NumToStr(segway_angle) + " " + 
+            NumToStr(segway_i_angle) + " " + NumToStr(voltage);        
+        WriteLnString(handle, s, str_size);*/
+
+        Wait(WAIT_TIME);
+    }
+}
