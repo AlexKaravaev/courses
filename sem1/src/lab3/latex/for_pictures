@@ -1,0 +1,29 @@
+uses graph;
+const XN = 30;
+      YN = 30;
+      XE = 160;
+      YE = 160;
+      NUMBER = 80;
+var  i, jx, jy: integer;
+begin
+  rectangle(20,20,320,320);
+  moveto(30,20);
+  lineto(30,320);
+  moveto(20,160);
+  lineto(320,160);
+  jx := XN;
+  jy := YN;
+  for i:=1 to round(NUMBER/2) do begin
+    moveto(jx, jy);
+    jx := round(jx + (XE-XN)/NUMBER*2);
+    lineto(jx, jy);
+    jy := round(jy + (YE-YN)/NUMBER*2);
+  end;
+  jy := round(jy + (YE-YN)/NUMBER*2);
+  for i:=1 to round(NUMBER/2) do begin
+    moveto(jx, jy);
+    jx := round(jx + (XE-XN)/NUMBER*2);
+    lineto(jx, jy);
+    jy := round(jy + (YE-YN)/NUMBER*2);
+  end;
+end.

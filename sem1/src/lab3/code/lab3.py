@@ -8,7 +8,7 @@ left_motor = LargeMotor('outA')
 right_motor = LargeMotor('outB')
 sensor_us = UltrasonicSensor('in1')
 
-# destance measurement unit is cm
+# distance measurement unit is cm
 sensor_us.mode = 'US-DIST-CM'
 
 dist_goal = 20
