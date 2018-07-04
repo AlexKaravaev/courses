@@ -1,5 +1,4 @@
 from ev3dev.ev3 import *
-#from ev3dev.core import *
 import time
 import math
 
