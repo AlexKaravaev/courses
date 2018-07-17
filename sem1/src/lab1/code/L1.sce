@@ -1,4 +1,4 @@
-results=read("/home/egor/Документы/L1/DATA/L1_100.txt",-1,2)
+results=read("/home/rami/Desktop/red/ev3_course/courses/sem1/src/lab1/code/DATA/L1_100.txt",-1,2)
 qlines=size(results,1)
 angle=results(:,2)*%pi/180
 time=results(:,1)
@@ -12,3 +12,6 @@ Wnls = koeffs(1)
 Tm = koeffs(2)
 model=Wnls*(time-Tm*(1-exp(-time/Tm)))
 plot2d(time,model,3)
+plot2d(ang_model.time, ang_model.values, 1)
+
+hl=legend(['Exp';'Theory';'model']);
