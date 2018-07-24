@@ -37,7 +37,7 @@ i = 48;                     // передаточное число
 J = (m*r^2)/2*i^2;          // момент инерции ротора
 
 // Запуск моделирования
-importXcosDiagram("D:\IFMO_COURSE\xcos_model_1.zcos");
+importXcosDiagram("D:\IFMO_COURSE\lab_2_model.zcos");
 xcos_simulate(scs_m, 4);
 
 // Построение ВАХ
