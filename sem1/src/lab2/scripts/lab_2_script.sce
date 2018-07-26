@@ -1,5 +1,5 @@
 modeling_time = 0.1;         // время в секундах (не более 100 сек)
-path_to_read_data = "D:\IFMO_COURSE\volt_ampere_data.txt";
+path_to_read_data = "volt_ampere_data.txt";
 
 // Наименование окон
 amperage_figure = 0;
@@ -37,7 +37,7 @@ i = 48;                     // передаточное число
 J = (m*r^2)/2*i^2;          // момент инерции ротора
 
 // Запуск моделирования
-importXcosDiagram("D:\IFMO_COURSE\lab_2_model.zcos");
+importXcosDiagram("../modeling/lab_2_model.zcos");
 xcos_simulate(scs_m, 4);
 
 // Построение ВАХ

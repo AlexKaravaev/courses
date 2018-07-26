@@ -1,5 +1,0 @@
-data = read("~/data.txt", -1, 2);
-time = data(:,1) / 1000;
-time = time - time(1);
-distance = data(:,2);
-plot2d(time, distance)
